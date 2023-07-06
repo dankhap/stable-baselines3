@@ -6,6 +6,7 @@ from stable_baselines3.ddpg import DDPG
 from stable_baselines3.dqn import DQN
 from stable_baselines3.her.her_replay_buffer import HerReplayBuffer
 from stable_baselines3.ppo import PPO
+from stable_baselines3.ppo_ib import PPO_IB
 from stable_baselines3.sac import SAC
 from stable_baselines3.sac_ib import SAC_IB
 from stable_baselines3.td3 import TD3
@@ -28,6 +29,7 @@ __all__ = [
     "DDPG",
     "DQN",
     "PPO",
+    "PPO_IB",
     "SAC",
     "SAC_IB",
     "TD3",

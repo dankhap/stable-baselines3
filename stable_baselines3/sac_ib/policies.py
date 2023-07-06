@@ -16,7 +16,7 @@ from stable_baselines3.common.torch_layers import (
     get_actor_critic_arch,
 )
 from stable_baselines3.common.type_aliases import Schedule
-from stable_baselines3.sac_ib.bottleneck import Bottleneck
+from stable_baselines3.common.bottleneck import Bottleneck
 
 # CAP the standard deviation of the actor
 LOG_STD_MAX = 2
@@ -156,6 +156,7 @@ class Actor(BasePolicy):
         """
         features = self.extract_features(obs, self.features_extractor)
         latent_pi = self.latent_pi(features)
+        ib_mu, latent_pi, ib_kl = self.bottleneck(latent_pi)
         mean_actions = self.mu(latent_pi)
 
         if self.use_sde:
@@ -164,15 +165,15 @@ class Actor(BasePolicy):
         log_std = self.log_std(latent_pi)  # type: ignore[operator]
         # Original Implementation to cap the standard deviation
         log_std = th.clamp(log_std, LOG_STD_MIN, LOG_STD_MAX)
-        return mean_actions, log_std, {}
+        return mean_actions, log_std, {}, ib_mu, ib_kl, latent_pi
 
     def forward(self, obs: th.Tensor, deterministic: bool = False) -> th.Tensor:
-        mean_actions, log_std, kwargs = self.get_action_dist_params(obs)
+        mean_actions, log_std, kwargs, ibmu, ibkl, iblat = self.get_action_dist_params(obs)
         # Note: the action is squashed
         return self.action_dist.actions_from_params(mean_actions, log_std, deterministic=deterministic, **kwargs)
 
     def action_log_prob(self, obs: th.Tensor) -> Tuple[th.Tensor, th.Tensor]:
-        mean_actions, log_std, kwargs = self.get_action_dist_params(obs)
+        mean_actions, log_std, kwargs, _,_,_ = self.get_action_dist_params(obs)
         # return action and associated log prob
         return self.action_dist.log_prob_from_params(mean_actions, log_std, **kwargs)
 
