@@ -13,10 +13,10 @@ from stable_baselines3.common.type_aliases import GymEnv, MaybeCallback, Schedul
 from stable_baselines3.common.utils import get_parameters_by_name, polyak_update
 from stable_baselines3.sac.policies import Actor, CnnPolicy, MlpPolicy, MultiInputPolicy, SACPolicy
 
-SelfSAC = TypeVar("SelfSAC", bound="SAC")
+SelfSAC = TypeVar("SelfSAC", bound="SAC_IB")
 
 
-class SAC(OffPolicyAlgorithm):
+class SAC_IB(OffPolicyAlgorithm):
     """
     Soft Actor-Critic (SAC)
     Off-Policy Maximum Entropy Deep Reinforcement Learning with a Stochastic Actor,
@@ -300,7 +300,7 @@ class SAC(OffPolicyAlgorithm):
         total_timesteps: int,
         callback: MaybeCallback = None,
         log_interval: int = 4,
-        tb_log_name: str = "SAC",
+        tb_log_name: str = "SAC_IB",
         reset_num_timesteps: bool = True,
         progress_bar: bool = False,
     ) -> SelfSAC:

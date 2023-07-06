@@ -16,6 +16,7 @@ from stable_baselines3.common.torch_layers import (
     get_actor_critic_arch,
 )
 from stable_baselines3.common.type_aliases import Schedule
+from stable_baselines3.sac_ib.bottleneck import Bottleneck
 
 # CAP the standard deviation of the actor
 LOG_STD_MAX = 2
@@ -85,6 +86,7 @@ class Actor(BasePolicy):
         latent_pi_net = create_mlp(features_dim, -1, net_arch, activation_fn)
         self.latent_pi = nn.Sequential(*latent_pi_net)
         last_layer_dim = net_arch[-1] if len(net_arch) > 0 else features_dim
+        self.bottleneck = Bottleneck(last_layer_dim, last_layer_dim)    
 
         if self.use_sde:
             self.action_dist = StateDependentNoiseDistribution(
